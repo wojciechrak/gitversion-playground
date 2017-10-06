@@ -14,4 +14,4 @@ build:
 after_build:
   - cmd: ECHO nuget pack source\Foo\Foo.nuspec -version "%GitVersion_NuGetVersion%" -prop "target=%CONFIGURATION%"
   - cmd: nuget pack source\Foo\Foo.nuspec -version "%GitVersion_NuGetVersion%" -prop "target=%CONFIGURATION%"
-  - cmd: appveyor PushArtifact "source\Foo\Foo.%GitVersion_NuGetVersion%.nupkg"
+  - cmd: appveyor PushArtifact "Foo.%GitVersion_NuGetVersion%.nupkg"
