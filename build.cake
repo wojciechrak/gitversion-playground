@@ -10,7 +10,7 @@ var configuration = Argument("configuration", "Release");
 // Define directories.
 var buildDir = Directory("./source/Foo/bin");
 var slnFile = "./source/Foo.sln";
-var nugetPackagesDir = "./nuget";
+var nugetPackagesDir = Directory("./nuget");
 
 GitVersion version = null;
 // TASKS
@@ -22,8 +22,6 @@ Task("Clean")
 });
 
 Task("Restore-NuGet-Packages")
-    .IsDependentOn("Clean")
-    .IsDependentOn("Version")
     .Does(() =>
 {
     NuGetRestore(slnFile);
@@ -40,14 +38,14 @@ Task("Version")
     });
 
 Task("Build")
+    .IsDependentOn("Clean")
     .IsDependentOn("Restore-NuGet-Packages")
-    .Does(() =>
-{
-    MSBuild(slnFile, settings =>
-        settings.SetConfiguration(configuration));
-});
+    .Does(() => {
+        MSBuild(slnFile, settings => settings.SetConfiguration(configuration));
+    });
 
 Task("NuGet-Pack")
+    .IsDependentOn("Version")
     .Does(() => {
         NuGetPack("./source/Foo/Foo.csproj", new NuGetPackSettings{
             Version = version.NuGetVersionV2,
@@ -58,12 +56,24 @@ Task("NuGet-Pack")
         });
     });
 
+Task("Artifacts")
+    .Does(() => {
+        if(AppVeyor.IsRunningOnAppVeyor)
+        {
+            AppVeyor.UploadArtifact(nugetPackagesDir + File("Foo." + version.NuGetVersionV2 + ".nupkg"));
+        }
+        else
+        {
+            Console.WriteLine("Not running on AppVeyor, skipping artifacts upload.");
+        }
+    });
+
 // TASK TARGETS
 
 Task("Default")
-    .IsDependentOn("Version")
     .IsDependentOn("Build")
-    .IsDependentOn("NuGet-Pack");
+    .IsDependentOn("NuGet-Pack")
+    .IsDependentOn("Artifacts");
 
 // EXECUTION
 
