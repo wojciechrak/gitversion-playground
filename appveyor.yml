@@ -5,13 +5,13 @@ assembly_info:
   patch: false
 
 before_build:
-  - dotnet restore source/Foo/Foo.csproj
+  - nuget restore source/Foo/Foo.csproj
   - ps: gitversion /l console /output buildserver /updateAssemblyInfo
 
-build_script:
-  - dotnet build source/Foo/Foo.csproj
+build:
+  project: source/Foo/Foo.csproj
 
 after_build:
-  - cmd: ECHO dotnet pack source/Foo/Foo.csproj
-  - cmd: dotnet pack source/Foo/Foo.csproj -o packages/
-  - cmd: appveyor PushArtifact "source/Foo/packages/Foo.%GitVersion_NuGetVersion%.nupkg"
+  - cmd: ECHO nuget pack source\Foo\Foo.nuspec -version "%GitVersion_NuGetVersion%" -prop "target=%CONFIGURATION%"
+  - cmd: nuget pack source\Foo\Foo.nuspec -version "%GitVersion_NuGetVersion%" -prop "target=%CONFIGURATION%"
+  - cmd: appveyor PushArtifact "source\Foo\Foo.%GitVersion_NuGetVersion%.nupkg"
