@@ -1,3 +1,4 @@
+#addin "Cake.Incubator"
 #tool "nuget:?package=GitVersion.CommandLine"
 // ARGUMENTS
 
@@ -11,6 +12,7 @@ var buildDir = Directory("./source/Foo/bin");
 var slnFile = "./source/Foo.sln";
 var nugetPackagesDir = "./nuget";
 
+GitVersion version = null;
 // TASKS
 
 Task("Clean")
@@ -21,6 +23,7 @@ Task("Clean")
 
 Task("Restore-NuGet-Packages")
     .IsDependentOn("Clean")
+    .IsDependentOn("Version")
     .Does(() =>
 {
     NuGetRestore(slnFile);
@@ -28,10 +31,12 @@ Task("Restore-NuGet-Packages")
 
 Task("Version")
     .Does(() => {
-        var version = GitVersion(new GitVersionSettings{
+        version = GitVersion(new GitVersionSettings{
             UpdateAssemblyInfo=true,
             OutputType=GitVersionOutput.Json
         });
+
+        Console.WriteLine(version.Dump());
     });
 
 Task("Build")
@@ -45,6 +50,7 @@ Task("Build")
 Task("NuGet-Pack")
     .Does(() => {
         NuGetPack("./source/Foo/Foo.csproj", new NuGetPackSettings{
+            Version = version.NuGetVersionV2,
             OutputDirectory = nugetPackagesDir,
             Properties = new Dictionary<string,string> {
                 {"Configuration", configuration}
