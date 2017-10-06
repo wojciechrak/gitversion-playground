@@ -9,7 +9,7 @@ before_build:
   - ps: gitversion /l console /output buildserver /updateAssemblyInfo
 
 build:
-  project: source/Foo/Foo.csproj
+  - cmd: dotnet build source/Foo/Foo.csproj
 
 after_build:
   - cmd: ECHO dotnet pack source/Foo/Foo.csproj
