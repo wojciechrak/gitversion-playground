@@ -8,8 +8,8 @@ before_build:
   - dotnet restore source/Foo/Foo.csproj
   - ps: gitversion /l console /output buildserver /updateAssemblyInfo
 
-build:
-  - cmd: dotnet build source/Foo/Foo.csproj
+build_script:
+  - dotnet build source/Foo/Foo.csproj
 
 after_build:
   - cmd: ECHO dotnet pack source/Foo/Foo.csproj
