@@ -22,6 +22,7 @@ Task("Clean")
 });
 
 Task("Restore-NuGet-Packages")
+    .IsDependentOn("Version")
     .Does(() =>
 {
     NuGetRestore(slnFile);
