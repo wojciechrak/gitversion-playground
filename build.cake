@@ -32,7 +32,7 @@ Task("Version")
     .Does(() => {
         version = GitVersion(new GitVersionSettings{
             UpdateAssemblyInfo=true,
-            OutputType=GitVersionOutput.Buildserver
+            OutputType=GitVersionOutput.BuildServer
         });
 
         Console.WriteLine(version.Dump());
