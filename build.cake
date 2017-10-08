@@ -32,9 +32,10 @@ Task("Version")
     .Does(() => {
         version = GitVersion(new GitVersionSettings{
             UpdateAssemblyInfo=true,
-            OutputType=GitVersionOutput.BuildServer
+            OutputType=GitVersionOutput.Json
         });
 
+        AppVeyor.UpdateBuildVersion(version.FullSemVer);
         Console.WriteLine(version.Dump());
     });
 
