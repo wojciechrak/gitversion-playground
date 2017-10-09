@@ -34,7 +34,11 @@ Task("Version")
             OutputType=GitVersionOutput.Json
         });
 
-        Console.WriteLine(version.Dump());
+	if(AppVeyor.IsRunningOnAppVeyor)
+	{
+	    AppVeyor.UpdateBuildVersion();
+	}
+        Information(version.Dump());
     });
 
 Task("Build")
