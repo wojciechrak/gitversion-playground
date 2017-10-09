@@ -36,7 +36,7 @@ Task("Version")
 
 	if(AppVeyor.IsRunningOnAppVeyor)
 	{
-	    AppVeyor.UpdateBuildVersion();
+	    AppVeyor.UpdateBuildVersion(version.NuGetVersionV2);
 	}
         Information(version.Dump());
     });
