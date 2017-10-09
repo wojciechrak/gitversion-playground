@@ -22,6 +22,7 @@ Task("Clean")
 });
 
 Task("Restore-NuGet-Packages")
+    .IsDependentOn("Version")
     .Does(() =>
 {
     NuGetRestore(slnFile);
@@ -34,7 +35,11 @@ Task("Version")
             OutputType=GitVersionOutput.Json
         });
 
-        Console.WriteLine(version.Dump());
+	if(AppVeyor.IsRunningOnAppVeyor)
+	{
+            AppVeyor.UpdateBuildVersion(version.FullSemVer);
+	}
+        Information(version.Dump());
     });
 
 Task("Build")
